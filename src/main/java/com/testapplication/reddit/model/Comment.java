@@ -2,8 +2,11 @@ package com.testapplication.reddit.model;
 
 import java.time.Instant;
 
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -22,9 +25,13 @@ public class Comment {
 	@NotNull(message = "Comment can't be empty")
 	private String text;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "postId")
 	private Post post;
 
 	private Instant createdDate;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "userId")
 	private User user;
 }

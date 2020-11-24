@@ -1,10 +1,15 @@
 package com.testapplication.reddit.model;
 
+import java.time.Instant;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 
 import org.springframework.lang.Nullable;
 
@@ -15,6 +20,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class Post {
 
 	@Id
@@ -33,6 +39,16 @@ public class Post {
 	
 	private Integer voteCount;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "userId")
+	private User user;
+	
+	
+	private Instant createdDate;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id")
+	private Subreddit subreddit;
 	
 	
 }
