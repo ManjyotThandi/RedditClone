@@ -8,6 +8,6 @@ import com.testapplication.reddit.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	Optional<User> findByUsername(String username);
+	Optional<User> findByuserName(String userName);
 	
 }

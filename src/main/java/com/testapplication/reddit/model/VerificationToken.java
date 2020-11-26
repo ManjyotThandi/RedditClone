@@ -2,6 +2,7 @@ package com.testapplication.reddit.model;
 
 import java.time.Instant;
 
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Entity
 public class VerificationToken {
 
 	@Id
