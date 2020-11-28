@@ -2,14 +2,9 @@ package com.testapplication.reddit.dto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Service;
 
 public class RegisterRequest {
-
-	private PasswordEncoder passwordEncoder;
 
 	private String email;
 
@@ -17,12 +12,7 @@ public class RegisterRequest {
 
 	private String password;
 
-	public PasswordEncoder getPasswordEncoder() {
-		return passwordEncoder;
-	}
-
-	public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-		this.passwordEncoder = passwordEncoder;
+	public RegisterRequest() {
 	}
 
 	public String getEmail() {
@@ -45,10 +35,8 @@ public class RegisterRequest {
 		return password;
 	}
 
-	@Autowired
-	public void setPassword(PasswordEncoder passwordEncoder, String password) {
-		String encodedPassword = passwordEncoder.encode(password);
-		this.password = encodedPassword;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }

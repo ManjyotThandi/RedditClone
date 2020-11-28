@@ -28,13 +28,17 @@ public class AuthService {
 
 	private final MailService mailService;
 
+	private final PasswordEncoder passwordEncoder;
+
 	@Autowired
 	public AuthService(ModelMapper modelMapper, UserRepository userRepository,
-			VerificationTokenRepository verificationTokenRepository, MailService mailService) {
+			VerificationTokenRepository verificationTokenRepository, MailService mailService,
+			PasswordEncoder passwordEncoder) {
 		this.modelMapper = modelMapper;
 		this.userRepository = userRepository;
 		this.verificationTokenRepository = verificationTokenRepository;
 		this.mailService = mailService;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	@Transactional
@@ -60,8 +64,10 @@ public class AuthService {
 	private User convertRegisterRequestToUser(RegisterRequest registerRequest) {
 		// put the bcrypt logic inside the dto class before we even get here password is
 		// now encrypted when jackson maps to request body in controller
+		// M.T bcrypt logic did not work in dto class.. putting it back here.
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
 		User user = modelMapper.map(registerRequest, User.class);
+		user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
 		user.setCreated(Instant.now());
 		user.setEnabled(false);
 
