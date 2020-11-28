@@ -9,6 +9,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 
+import com.testapplication.reddit.exceptions.SpringRedditException;
 import com.testapplication.reddit.model.NotificationEmail;
 
 @Service
@@ -39,6 +40,7 @@ public class MailService {
 			logger.info("Mail was sent succesfully");
 		} catch (MailException e) {
 			logger.info("Mail was unable to send");
+			throw new SpringRedditException("Exception occured when sending mail to" + notificationEmail.getRecipent());
 		}
 	}
 }
