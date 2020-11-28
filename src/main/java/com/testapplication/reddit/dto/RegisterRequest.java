@@ -7,11 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
 public class RegisterRequest {
 
-	@Autowired
 	private PasswordEncoder passwordEncoder;
 
 	private String email;
@@ -48,7 +45,8 @@ public class RegisterRequest {
 		return password;
 	}
 
-	public void setPassword(String password) {
+	@Autowired
+	public void setPassword(PasswordEncoder passwordEncoder, String password) {
 		String encodedPassword = passwordEncoder.encode(password);
 		this.password = encodedPassword;
 	}

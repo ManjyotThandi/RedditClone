@@ -1,6 +1,8 @@
 package com.testapplication.reddit.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,8 +25,9 @@ public class AuthController {
 	// if there is an error it will be thrown in MailService.java, else it will be
 	// successful
 	@PostMapping("/signup")
-	public void signup(@RequestBody RegisterRequest registerRequest) {
+	public ResponseEntity<String> signup(@RequestBody RegisterRequest registerRequest) {
 		authService.signup(registerRequest);
+		return new ResponseEntity<String>("User Registered", HttpStatus.OK);
 	}
 
 }

@@ -32,6 +32,9 @@ public class MailService {
 			messageHelper.setFrom("testingcodeprojects@gmail.com");
 			messageHelper.setTo(notificationEmail.getRecipent());
 			messageHelper.setSubject(notificationEmail.getSubject());
+			// instead of just a simple text we are sending an html page back to the user
+			// using thymleaf.
+			// This is the text of the email
 			messageHelper.setText(mailContentBuilder.build(notificationEmail.getBody()));
 		};
 

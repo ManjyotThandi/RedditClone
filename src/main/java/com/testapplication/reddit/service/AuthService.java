@@ -58,6 +58,8 @@ public class AuthService {
 	}
 
 	private User convertRegisterRequestToUser(RegisterRequest registerRequest) {
+		// put the bcrypt logic inside the dto class before we even get here password is
+		// now encrypted when jackson maps to request body in controller
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
 		User user = modelMapper.map(registerRequest, User.class);
 		user.setCreated(Instant.now());
