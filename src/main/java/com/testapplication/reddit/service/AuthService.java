@@ -1,6 +1,7 @@
 package com.testapplication.reddit.service;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.testapplication.reddit.dto.RegisterRequest;
+import com.testapplication.reddit.exceptions.SpringRedditException;
 import com.testapplication.reddit.model.NotificationEmail;
 import com.testapplication.reddit.model.User;
 import com.testapplication.reddit.model.VerificationToken;
@@ -58,7 +60,6 @@ public class AuthService {
 		mailService.sendMail(new NotificationEmail("Please Activate your account", user.getEmail(),
 				"Thank you for signing up, please click on the link" + "localhost8080/api/auth/accountVerification/"
 						+ token));
-
 	}
 
 	private User convertRegisterRequestToUser(RegisterRequest registerRequest) {
@@ -82,5 +83,28 @@ public class AuthService {
 		verificationTokenRepository.save(verificationToken);
 
 		return token;
+	}
+
+	public void verifyAccount(String token) {
+		// query verification token repository to get token
+		VerificationToken verificationToken = verificationTokenRepository.findByToken(token)
+				.orElseThrow(() -> new SpringRedditException("InvalidToken"));
+
+		fetchUserAndEnable(verificationToken);
+	}
+
+	@Transactional
+	private void fetchUserAndEnable(VerificationToken verificationToken) {
+		String userName = verificationToken.getUser().getUserName();
+
+		User user = userRepository.findByuserName(userName).orElseThrow(
+				() -> new SpringRedditException("User not found for this verification token. Username is" + userName));
+
+		user.setEnabled(true);
+
+		// once we have enabled the user, save them back to db so when client requests
+		// we can verify from db
+		userRepository.save(user);
+
 	}
 }
