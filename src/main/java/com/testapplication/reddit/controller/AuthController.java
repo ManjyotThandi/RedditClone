@@ -1,5 +1,9 @@
 package com.testapplication.reddit.controller;
 
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.testapplication.reddit.dto.AuthenticationResponse;
+import com.testapplication.reddit.dto.LoginRequest;
 import com.testapplication.reddit.dto.RegisterRequest;
 import com.testapplication.reddit.service.AuthService;
+
+import io.jsonwebtoken.security.InvalidKeyException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -37,6 +45,12 @@ public class AuthController {
 	public ResponseEntity<String> verifyAccount(@PathVariable String token) {
 		authService.verifyAccount(token);
 		return new ResponseEntity<>("Message account activated successfully", HttpStatus.OK);
+	}
+
+	@PostMapping("/login")
+	public AuthenticationResponse login(@RequestBody LoginRequest loginRequest)
+			throws InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
+		return authService.login(loginRequest);
 	}
 
 }

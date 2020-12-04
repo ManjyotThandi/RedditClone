@@ -1,5 +1,8 @@
 package com.testapplication.reddit.service;
 
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -7,10 +10,17 @@ import java.util.UUID;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.testapplication.reddit.dto.AuthenticationResponse;
+import com.testapplication.reddit.dto.LoginRequest;
 import com.testapplication.reddit.dto.RegisterRequest;
 import com.testapplication.reddit.exceptions.SpringRedditException;
 import com.testapplication.reddit.model.NotificationEmail;
@@ -18,6 +28,9 @@ import com.testapplication.reddit.model.User;
 import com.testapplication.reddit.model.VerificationToken;
 import com.testapplication.reddit.repository.UserRepository;
 import com.testapplication.reddit.repository.VerificationTokenRepository;
+import com.testapplication.reddit.security.JwtProvider;
+
+import io.jsonwebtoken.security.InvalidKeyException;
 
 @Service
 public class AuthService {
@@ -32,15 +45,23 @@ public class AuthService {
 
 	private final PasswordEncoder passwordEncoder;
 
+	private final AuthenticationManager authenticationManager;
+
+	private final JwtProvider jwtProvider;
+
 	@Autowired
 	public AuthService(ModelMapper modelMapper, UserRepository userRepository,
 			VerificationTokenRepository verificationTokenRepository, MailService mailService,
-			PasswordEncoder passwordEncoder) {
+			PasswordEncoder passwordEncoder,
+			@Qualifier("org.springframework.security.authenticationManager") AuthenticationManager authenticationManager,
+			JwtProvider jwtProvider) {
 		this.modelMapper = modelMapper;
 		this.userRepository = userRepository;
 		this.verificationTokenRepository = verificationTokenRepository;
 		this.mailService = mailService;
 		this.passwordEncoder = passwordEncoder;
+		this.authenticationManager = authenticationManager;
+		this.jwtProvider = jwtProvider;
 	}
 
 	@Transactional
@@ -105,6 +126,19 @@ public class AuthService {
 		// once we have enabled the user, save them back to db so when client requests
 		// we can verify from db
 		userRepository.save(user);
+
+	}
+
+	public AuthenticationResponse login(LoginRequest loginRequest)
+			throws InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
+		// implement logic to authenticate user
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword()));
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String token = jwtProvider.generateToken(authentication);
+
+		// We would rather send this dto back to user
+		return new AuthenticationResponse(token, loginRequest.getUserName());
 
 	}
 }
