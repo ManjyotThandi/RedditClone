@@ -65,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		// Getting the input stream from a keystore file (This file is loaded at run
 		// time by class loader)
-		InputStream resourceAsStream = getClass().getResourceAsStream("springblog.jks");
+		InputStream resourceAsStream = getClass().getResourceAsStream("/springblog.jks");
 
 		keyStore.load(resourceAsStream, "secret".toCharArray());
 		return keyStore;
