@@ -1,5 +1,12 @@
 package com.testapplication.reddit.config;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,9 +52,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Bean(BeanIds.AUTHENTICATION_MANAGER)
+	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
+	}
+
+	@Bean
+	public KeyStore keyStore() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		KeyStore keyStore = KeyStore.getInstance("JKS");
+
+		// Getting the input stream from a keystore file (This file is loaded at run
+		// time by class loader)
+		InputStream resourceAsStream = getClass().getResourceAsStream("springblog.jks");
+
+		keyStore.load(resourceAsStream, "secret".toCharArray());
+		return keyStore;
 	}
 }

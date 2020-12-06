@@ -19,16 +19,4 @@ public class UtilityBeans {
 		return new ModelMapper();
 	}
 
-	@Bean
-	public KeyStore keyStore() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-		KeyStore keyStore = KeyStore.getInstance("JKS");
-
-		// Getting the input stream from a keystore file (This file is loaded at run
-		// time by class loader)
-		InputStream resourceAsStream = getClass().getResourceAsStream("springblog.jks");
-
-		keyStore.load(resourceAsStream, "secret".toCharArray());
-		return keyStore;
-	}
-
 }

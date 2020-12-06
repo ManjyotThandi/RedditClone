@@ -48,8 +48,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	public AuthenticationResponse login(@RequestBody LoginRequest loginRequest)
-			throws InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
+	public AuthenticationResponse login(@RequestBody LoginRequest loginRequest) {
 		return authService.login(loginRequest);
 	}
 

@@ -14,9 +14,9 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import com.testapplication.reddit.model.User;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.InvalidKeyException;
@@ -31,11 +31,21 @@ public class JwtProvider {
 		this.keyStore = keyStore;
 	}
 
-	public String generateToken(Authentication authentication)
-			throws InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
+	public String generateToken(Authentication authentication) {
+		
+		
+		// essentially getting principal being authenticated from the  Authentication object and down casting it to a Spring User
 		User principal = (User) authentication.getPrincipal();
 
-		return Jwts.builder().setSubject(principal.getUserName()).signWith(getPrivateKey()).compact();
+		try {
+			// creating a token here and setting the subject to the username, signing it with private key
+			// private key comes from keystore
+			return Jwts.builder().setSubject(principal.getUsername()).signWith(getPrivateKey()).compact();
+		} catch (InvalidKeyException | UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	private PrivateKey getPrivateKey() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {

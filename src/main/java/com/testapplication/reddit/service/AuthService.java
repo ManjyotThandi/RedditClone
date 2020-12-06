@@ -45,6 +45,7 @@ public class AuthService {
 
 	private final PasswordEncoder passwordEncoder;
 
+	// This is getting injected from securityconfig
 	private final AuthenticationManager authenticationManager;
 
 	private final JwtProvider jwtProvider;
@@ -129,12 +130,16 @@ public class AuthService {
 
 	}
 
-	public AuthenticationResponse login(LoginRequest loginRequest)
-			throws InvalidKeyException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
+	public AuthenticationResponse login(LoginRequest loginRequest){
 		// implement logic to authenticate user
+		//Somewhere here the usersdetailserviceimpl is used as part of authenication manager and the user is authenticated
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword()));
+		
+		// returns an object of Authentication. This will set authenticated to true (?)
 		SecurityContextHolder.getContext().setAuthentication(authentication);
+		
+		// create the token
 		String token = jwtProvider.generateToken(authentication);
 
 		// We would rather send this dto back to user
