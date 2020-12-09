@@ -19,6 +19,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.testapplication.reddit.security.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -30,6 +33,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
+	@Autowired
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
+
 	public void configure(HttpSecurity httpSecurity) throws Exception {
 		// since we are not storing our session in a cookie, rather using tokens we can
 		// disable csrf attacks
@@ -37,6 +43,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		// allow /api/auth pattern to send requests to our backend. Any diferent
 		// patterns should be authenticated
 				authorizeRequests().antMatchers("/api/auth/**").permitAll().anyRequest().authenticated();
+		
+		// Spring will check for token before username and password authentiation
+		httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 	}
 
 	// create an authentication manager using spring authentication manager builder
