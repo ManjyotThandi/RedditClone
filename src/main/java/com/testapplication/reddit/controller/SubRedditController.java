@@ -32,4 +32,5 @@ public class SubRedditController {
 	public ResponseEntity<List<SubredditDTO>> getAllSubreddits() {
 		return ResponseEntity.status(201).body(subredditService.getAll());
 	}
+
 }

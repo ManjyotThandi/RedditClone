@@ -23,6 +23,7 @@ import com.testapplication.reddit.dto.AuthenticationResponse;
 import com.testapplication.reddit.dto.LoginRequest;
 import com.testapplication.reddit.dto.RegisterRequest;
 import com.testapplication.reddit.exceptions.SpringRedditException;
+import com.testapplication.reddit.exceptions.UserNameNotFoundException;
 import com.testapplication.reddit.model.NotificationEmail;
 import com.testapplication.reddit.model.User;
 import com.testapplication.reddit.model.VerificationToken;
@@ -130,20 +131,32 @@ public class AuthService {
 
 	}
 
-	public AuthenticationResponse login(LoginRequest loginRequest){
+	public AuthenticationResponse login(LoginRequest loginRequest) {
 		// implement logic to authenticate user
-		//Somewhere here the usersdetailserviceimpl is used as part of authenication manager and the user is authenticated
+		// Somewhere here the usersdetailserviceimpl is used as part of authenication
+		// manager and the user is authenticated
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword()));
-		
+
 		// returns an object of Authentication. This will set authenticated to true (?)
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		
+
 		// create the token
 		String token = jwtProvider.generateToken(authentication);
 
 		// We would rather send this dto back to user
 		return new AuthenticationResponse(token, loginRequest.getUserName());
 
+	}
+
+	public User getCurrentUser() {
+		// This is set in the filter when a user sends a request I believe
+		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder
+				.getContext().getAuthentication().getPrincipal();
+
+		return userRepository.findByuserName(principal.getUsername()).orElseThrow(() -> {
+			throw new UserNameNotFoundException(
+					"Username not found when trying to get current user" + principal.getUsername());
+		});
 	}
 }

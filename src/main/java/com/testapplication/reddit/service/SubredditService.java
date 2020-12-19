@@ -1,12 +1,16 @@
 package com.testapplication.reddit.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.testapplication.reddit.dto.SubredditDTO;
+import com.testapplication.reddit.exceptions.SpringRedditException;
+import com.testapplication.reddit.mapper.SubredditMapper;
 import com.testapplication.reddit.model.Subreddit;
 import com.testapplication.reddit.repository.SubRedditRepository;
 
@@ -15,11 +19,12 @@ public class SubredditService {
 
 	@Autowired
 	private SubRedditRepository subredditRepository;
+	private SubredditMapper subredditMapper;
 
+	@Transactional
 	public SubredditDTO save(SubredditDTO subredditDTO) {
-		// use lombok builder pattern
-		Subreddit subreddit = Subreddit.builder().name(subredditDTO.getSubredditName())
-				.description(subredditDTO.getDescription()).build();
+		// use mapstruct to map from dto to actual object
+		Subreddit subreddit = subredditMapper.mapSubredditDTOtoSubreddit(subredditDTO);
 
 		Subreddit savedSubreddit = subredditRepository.save(subreddit);
 
@@ -29,13 +34,19 @@ public class SubredditService {
 		return subredditDTO;
 	}
 
+	@Transactional
 	public List<SubredditDTO> getAll() {
-		// take the subreddit and map it to dto and return that back to user
-		return subredditRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
+		// use mapstruct to map frop subreddit to dto, and send that back to user
+		return subredditRepository.findAll().stream().map(subredditMapper::mapSubredditToDto)
+				.collect(Collectors.toList());
 	}
 
-	private SubredditDTO mapToDTO(Subreddit subreddit) {
-		return SubredditDTO.builder().subredditName(subreddit.getName()).id(subreddit.getId())
-				.numberOfPosts(subreddit.getPosts().size()).build();
+	public SubredditDTO getSubreddit(Long id) {
+		Subreddit subreddit = subredditRepository.findById(id).orElseThrow(() -> {
+			throw new SpringRedditException("Can't find subreddit with id" + id);
+		});
+
+		return subredditMapper.mapSubredditToDto(subreddit);
 	}
+
 }
