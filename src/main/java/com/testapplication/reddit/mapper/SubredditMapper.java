@@ -18,6 +18,7 @@ public interface SubredditMapper {
 	// perform inverse
 	@InheritInverseConfiguration
 	@Mapping(target = "posts", ignore = true)
+	@Mapping(source = "subredditName", target = "name")
 	Subreddit mapSubredditDTOtoSubreddit(SubredditDTO subredditDTO);
 
 	default Integer getNumberOfPosts(Subreddit subreddit) {

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.testapplication.reddit.dto.SubredditDTO;
+import com.testapplication.reddit.model.Subreddit;
 import com.testapplication.reddit.service.SubredditService;
 
 import lombok.AllArgsConstructor;
@@ -25,7 +26,8 @@ public class SubRedditController {
 
 	@PostMapping
 	public ResponseEntity<SubredditDTO> createSubreddit(@RequestBody SubredditDTO subredditDTO) {
-		return ResponseEntity.status(201).body(subredditService.save(subredditDTO));
+		SubredditDTO subreddit = subredditService.save(subredditDTO);
+		return ResponseEntity.status(201).body(subreddit);
 	}
 
 	@GetMapping

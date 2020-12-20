@@ -19,6 +19,7 @@ public class SubredditService {
 
 	@Autowired
 	private SubRedditRepository subredditRepository;
+	@Autowired
 	private SubredditMapper subredditMapper;
 
 	@Transactional
@@ -30,7 +31,7 @@ public class SubredditService {
 
 		// This will return the subreddit saved so using that build the DTO back up
 		// again and send it back to user
-		subredditDTO.setId(savedSubreddit.getId());
+		//subredditDTO.setId(savedSubreddit.getId());
 		return subredditDTO;
 	}
 
