@@ -25,7 +25,8 @@ import lombok.NoArgsConstructor;
 public class Subreddit {
 
 	@Id
-	@GeneratedValue(generator = "sequence")
+	// removed generated value = sequence, it was incrementing by 2?
+	@GeneratedValue
 	private Long id;
 	
 	@NotNull(message = "Please provide a name for subreddit")
