@@ -1,5 +1,6 @@
 package com.testapplication.reddit.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,5 +90,6 @@ public class CommentsService {
 		mailService.sendMail(
 				new NotificationEmail(user.getUserName() + "Commented on your post", user.getEmail(), message));
 	}
+	
 
 }
