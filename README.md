@@ -1,1 +1,1 @@
-Java + SpringBoot application that I am working on
+Java + SpringBoot application for the backend part of a reddit clone only, no front end.
